@@ -7,5 +7,7 @@ import com.felipemelo.osworks.domain.model.Cliente;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long>{
+	
+	Cliente findByEmail(String email);
 
 }

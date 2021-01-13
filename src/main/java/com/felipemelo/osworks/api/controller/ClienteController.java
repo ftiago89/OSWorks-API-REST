@@ -20,10 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.felipemelo.osworks.domain.model.Cliente;
 import com.felipemelo.osworks.domain.repository.ClienteRepository;
+import com.felipemelo.osworks.domain.service.CadastroClienteService;
 
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
+	
+	@Autowired
+	private CadastroClienteService cadastroCliente;
 	
 	@Autowired
 	private ClienteRepository clienteRepository;
@@ -47,7 +51,7 @@ public class ClienteController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cliente insert(@Valid @RequestBody Cliente cliente) {
-		return clienteRepository.save(cliente);
+		return cadastroCliente.save(cliente);
 	}
 	
 	@PutMapping("/{id}")
@@ -58,7 +62,7 @@ public class ClienteController {
 		}
 		
 		cliente.setId(id);
-		cliente = clienteRepository.save(cliente);
+		cliente = cadastroCliente.save(cliente);
 		
 		return ResponseEntity.ok(cliente);
 	}
