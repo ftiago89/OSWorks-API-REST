@@ -3,6 +3,8 @@ package com.felipemelo.osworks.api.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +48,7 @@ public class OrdemServicoController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public OrdemServico insert(@RequestBody OrdemServico ordemServico) {
+	public OrdemServico insert(@Valid @RequestBody OrdemServico ordemServico) {
 		return ordemServicoService.save(ordemServico);
 	}
 	
