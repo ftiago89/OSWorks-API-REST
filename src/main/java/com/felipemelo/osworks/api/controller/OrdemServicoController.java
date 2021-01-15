@@ -2,9 +2,11 @@ package com.felipemelo.osworks.api.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.felipemelo.osworks.api.model.OrdemServicoDTO;
+import com.felipemelo.osworks.api.model.OrdemServicoInput;
 import com.felipemelo.osworks.domain.model.OrdemServico;
 import com.felipemelo.osworks.domain.repository.OrdemServicoRepository;
 import com.felipemelo.osworks.domain.service.GestaoOrdemServicoService;
@@ -32,37 +36,42 @@ public class OrdemServicoController {
 	@Autowired
 	private OrdemServicoRepository ordemServicoRepository;
 	
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@GetMapping()
-	public List<OrdemServico> findAll(){
-		return ordemServicoRepository.findAll();
+	public List<OrdemServicoDTO> findAll(){
+		return toCollectionDto(ordemServicoRepository.findAll());
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<OrdemServico> find(@PathVariable Long id){
+	public ResponseEntity<OrdemServicoDTO> find(@PathVariable Long id){
 		Optional<OrdemServico> ordemServico = ordemServicoRepository.findById(id);
 		if (ordemServico.isPresent()) {
-			return ResponseEntity.ok(ordemServico.get());
+			OrdemServicoDTO ordemServicoDto = toDto(ordemServico.get());
+			return ResponseEntity.ok(ordemServicoDto);
 		}
 		return ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public OrdemServico insert(@Valid @RequestBody OrdemServico ordemServico) {
-		return ordemServicoService.save(ordemServico);
+	public OrdemServicoDTO insert(@Valid @RequestBody OrdemServicoInput ordemServicoInput) {
+		OrdemServico ordemServico = fromInput(ordemServicoInput);
+		
+		return toDto(ordemServicoService.save(ordemServico));
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<OrdemServico> update(@PathVariable Long id, 
+	public ResponseEntity<OrdemServicoDTO> update(@PathVariable Long id, 
 			@RequestBody OrdemServico ordemServico){
 		if (!ordemServicoRepository.existsById(id)) {
 			return ResponseEntity.notFound().build();
 		}
 		
 		ordemServico.setId(id);
-		ordemServicoRepository.save(ordemServico);
 		
-		return ResponseEntity.ok(ordemServico);
+		return ResponseEntity.ok(toDto(ordemServicoRepository.save(ordemServico)));
 	}
 	
 	@DeleteMapping("/{id}")
@@ -74,5 +83,19 @@ public class OrdemServicoController {
 		ordemServicoRepository.deleteById(id);
 		
 		return ResponseEntity.noContent().build();
+	}
+	
+	private OrdemServicoDTO toDto(OrdemServico ordemServico) {
+		return modelMapper.map(ordemServico, OrdemServicoDTO.class);
+	}
+	
+	private List<OrdemServicoDTO> toCollectionDto(List<OrdemServico> ordensServico){
+		return ordensServico.stream()
+				.map(ordemServico -> toDto(ordemServico))
+				.collect(Collectors.toList());
+	}
+	
+	private OrdemServico fromInput(OrdemServicoInput ordemServicoInput) {
+		return modelMapper.map(ordemServicoInput, OrdemServico.class);
 	}
 }
