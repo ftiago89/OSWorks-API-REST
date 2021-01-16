@@ -64,14 +64,15 @@ public class OrdemServicoController {
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<OrdemServicoDTO> update(@PathVariable Long id, 
-			@RequestBody OrdemServico ordemServico){
+			@RequestBody OrdemServicoInput ordemServicoInput){
 		if (!ordemServicoRepository.existsById(id)) {
 			return ResponseEntity.notFound().build();
 		}
 		
+		OrdemServico ordemServico = fromInput(ordemServicoInput);
 		ordemServico.setId(id);
 		
-		return ResponseEntity.ok(toDto(ordemServicoRepository.save(ordemServico)));
+		return ResponseEntity.ok(toDto(ordemServicoService.save(ordemServico)));
 	}
 	
 	@DeleteMapping("/{id}")
