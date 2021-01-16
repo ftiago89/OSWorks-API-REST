@@ -86,6 +86,12 @@ public class OrdemServicoController {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@PutMapping("/{id}/finalizacao")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void finalizar(@PathVariable Long id) {
+		ordemServicoService.finalizar(id);
+	}
+	
 	private OrdemServicoDTO toDto(OrdemServico ordemServico) {
 		return modelMapper.map(ordemServico, OrdemServicoDTO.class);
 	}

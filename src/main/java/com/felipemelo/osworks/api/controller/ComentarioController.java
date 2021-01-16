@@ -21,7 +21,6 @@ import com.felipemelo.osworks.api.model.ComentarioInput;
 import com.felipemelo.osworks.domain.exception.EntidadeNaoEncontradaException;
 import com.felipemelo.osworks.domain.model.Comentario;
 import com.felipemelo.osworks.domain.model.OrdemServico;
-import com.felipemelo.osworks.domain.repository.ComentarioRepository;
 import com.felipemelo.osworks.domain.repository.OrdemServicoRepository;
 import com.felipemelo.osworks.domain.service.GestaoOrdemServicoService;
 

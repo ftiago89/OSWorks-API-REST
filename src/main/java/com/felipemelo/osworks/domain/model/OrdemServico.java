@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.felipemelo.osworks.domain.exception.DomainException;
+
 @Entity
 public class OrdemServico {
 	
@@ -122,6 +124,23 @@ public class OrdemServico {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	
+	public boolean podeSerFinalizada() {
+		return StatusOrdemServico.ABERTA.equals(getStatus());
+	}
+	
+	public boolean naoPodeSerFinalizada() {
+		return !podeSerFinalizada();
+	}
+
+	public void finalizar() {
+		if(naoPodeSerFinalizada()) {
+			throw new DomainException("Ordem de serviço não pode ser finalizada");
+		}
+		
+		this.setStatus(StatusOrdemServico.FINALIZADA);
+		this.setDataFinalizacao(OffsetDateTime.now());
 	}
 
 }
